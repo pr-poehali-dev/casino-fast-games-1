@@ -703,6 +703,29 @@ const Index = () => {
                     </div>
                   </div>
                 </Card>
+
+                <Card className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Icon name="CreditCard" size={24} className="text-accent" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg mb-2">Озон Банк</h3>
+                      <p className="text-sm text-muted-foreground mb-4">Быстрое пополнение через Озон Банк</p>
+                      
+                      <div className="bg-muted rounded-lg p-4 mb-3">
+                        <div className="flex items-center justify-between">
+                          <code className="text-lg font-mono">2204 3209 6678 9424</code>
+                          <Button size="sm" variant="ghost" onClick={() => navigator.clipboard.writeText('2204320966789424')}>
+                            <Icon name="Copy" size={16} />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <Badge variant="outline">RUB</Badge>
+                    </div>
+                  </div>
+                </Card>
               </TabsContent>
 
               <TabsContent value="crypto" className="space-y-4">
