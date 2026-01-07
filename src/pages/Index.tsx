@@ -785,13 +785,36 @@ const Index = () => {
 
                 <Card className="p-6 border-primary/50">
                   <div className="flex items-center gap-3 mb-4">
+                    <Icon name="AlertCircle" size={20} className="text-primary" />
+                    <h3 className="font-semibold">Минимальная сумма пополнения</h3>
+                  </div>
+                  <div className="bg-primary/10 rounded-lg p-4 mb-4">
+                    <div className="flex items-center justify-center gap-4">
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-primary">500₽</div>
+                        <div className="text-sm text-muted-foreground">Минимум</div>
+                      </div>
+                      <div className="text-2xl text-muted-foreground">—</div>
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-primary">1000₽</div>
+                        <div className="text-sm text-muted-foreground">Рекомендуем</div>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground text-center">
+                    Пополнения менее 500₽ не обрабатываются автоматически
+                  </p>
+                </Card>
+
+                <Card className="p-6 border-border">
+                  <div className="flex items-center gap-3 mb-4">
                     <Icon name="Info" size={20} className="text-primary" />
                     <h3 className="font-semibold">Как пополнить баланс?</h3>
                   </div>
                   <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
                     <li>Выберите удобный способ оплаты</li>
                     <li>Скопируйте реквизиты кнопкой "Копировать"</li>
-                    <li>Переведите нужную сумму на указанные реквизиты</li>
+                    <li>Переведите сумму от 500₽ до 1000₽ на указанные реквизиты</li>
                     <li>Баланс обновится автоматически в течение 5-15 минут</li>
                   </ol>
                 </Card>
