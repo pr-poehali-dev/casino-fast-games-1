@@ -19,6 +19,7 @@ const Index = () => {
   const [balanceUSD, setBalanceUSD] = useState(0);
   const [balanceRUB, setBalanceRUB] = useState(0);
   const [selectedGame, setSelectedGame] = useState<GameType | null>(null);
+  const [depositAmount, setDepositAmount] = useState<number>(1000);
   
   const balance = currency === 'USD' ? balanceUSD : balanceRUB;
   const setBalance = currency === 'USD' ? setBalanceUSD : setBalanceRUB;
@@ -658,6 +659,56 @@ const Index = () => {
               </TabsList>
 
               <TabsContent value="cards" className="space-y-4">
+                <Card className="p-6 border-primary/50">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Icon name="Wallet" size={20} className="text-primary" />
+                    <h3 className="font-semibold">Выберите сумму пополнения</h3>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    <Button
+                      variant={depositAmount === 500 ? 'default' : 'outline'}
+                      onClick={() => setDepositAmount(500)}
+                      className="h-16 text-lg font-semibold"
+                    >
+                      500₽
+                    </Button>
+                    <Button
+                      variant={depositAmount === 1000 ? 'default' : 'outline'}
+                      onClick={() => setDepositAmount(1000)}
+                      className="h-16 text-lg font-semibold"
+                    >
+                      1000₽
+                    </Button>
+                    <Button
+                      variant={depositAmount === 5000 ? 'default' : 'outline'}
+                      onClick={() => setDepositAmount(5000)}
+                      className="h-16 text-lg font-semibold"
+                    >
+                      5000₽
+                    </Button>
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="text-sm text-muted-foreground mb-2 block">Или введите свою сумму</label>
+                    <input
+                      type="number"
+                      value={depositAmount}
+                      onChange={(e) => setDepositAmount(Number(e.target.value))}
+                      min={500}
+                      className="w-full bg-muted rounded-lg px-4 py-3 text-lg"
+                      placeholder="Введите сумму от 500₽"
+                    />
+                  </div>
+
+                  <div className="bg-primary/10 rounded-lg p-4 mb-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Сумма к оплате:</span>
+                      <span className="text-2xl font-bold text-primary">{depositAmount}₽</span>
+                    </div>
+                  </div>
+                </Card>
+
                 <Card className="p-6">
                   <div className="flex items-start gap-4 mb-4">
                     <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -726,16 +777,32 @@ const Index = () => {
                     </div>
                   </div>
                 </Card>
+
+                <Card className="p-6 bg-primary/5 border-primary">
+                  <Button 
+                    className="w-full h-14 text-lg font-semibold"
+                    size="lg"
+                    onClick={() => {
+                      alert(`Переведите ${depositAmount}₽ на выбранную карту. После оплаты баланс обновится автоматически.`);
+                    }}
+                  >
+                    <Icon name="CreditCard" size={20} className="mr-2" />
+                    Оплатить {depositAmount}₽
+                  </Button>
+                  <p className="text-xs text-center text-muted-foreground mt-3">
+                    Переведите указанную сумму на любую из карт выше
+                  </p>
+                </Card>
               </TabsContent>
 
               <TabsContent value="crypto" className="space-y-4">
                 <Card className="p-6">
                   <div className="flex items-start gap-4 mb-4">
-                    <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Icon name="Bitcoin" size={24} className="text-orange-500" />
+                    <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Icon name="DollarSign" size={24} className="text-green-500" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg mb-2">Bitcoin (BTC)</h3>
+                      <h3 className="font-semibold text-lg mb-2">USDT (Tether)</h3>
                       <p className="text-sm text-muted-foreground mb-2">Сеть: TRC20</p>
                       
                       <div className="bg-muted rounded-lg p-4 mb-3">
