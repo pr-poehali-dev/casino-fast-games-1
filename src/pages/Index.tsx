@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Icon from '@/components/ui/icon';
 
 type GameType = 'crash' | 'roulette' | 'slots';
+type Currency = 'USD' | 'RUB';
 
 interface CrashHistory {
   multiplier: number;
@@ -12,9 +14,14 @@ interface CrashHistory {
 }
 
 const Index = () => {
-  const [activeSection, setActiveSection] = useState<'home' | 'games'>('home');
-  const [balance, setBalance] = useState(1000);
+  const [activeSection, setActiveSection] = useState<'home' | 'games' | 'deposit'>('home');
+  const [currency, setCurrency] = useState<Currency>('USD');
+  const [balanceUSD, setBalanceUSD] = useState(0);
+  const [balanceRUB, setBalanceRUB] = useState(0);
   const [selectedGame, setSelectedGame] = useState<GameType | null>(null);
+  
+  const balance = currency === 'USD' ? balanceUSD : balanceRUB;
+  const setBalance = currency === 'USD' ? setBalanceUSD : setBalanceRUB;
 
   const [crashMultiplier, setCrashMultiplier] = useState(1.00);
   const [crashActive, setCrashActive] = useState(false);
@@ -186,12 +193,29 @@ const Index = () => {
               <Icon name="Gamepad2" size={18} className="mr-2" />
               Игры
             </Button>
+            <Button
+              variant={activeSection === 'deposit' ? 'default' : 'ghost'}
+              onClick={() => setActiveSection('deposit')}
+            >
+              <Icon name="Wallet" size={18} className="mr-2" />
+              Пополнение
+            </Button>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="px-4 py-2 bg-muted rounded-lg">
+            <div className="px-4 py-2 bg-muted rounded-lg flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setCurrency(currency === 'USD' ? 'RUB' : 'USD')}
+                className="h-6 px-2"
+              >
+                {currency}
+              </Button>
               <span className="text-sm text-muted-foreground">Баланс:</span>
-              <span className="ml-2 font-semibold text-lg">${balance}</span>
+              <span className="ml-2 font-semibold text-lg">
+                {currency === 'USD' ? '$' : '₽'}{balance.toFixed(2)}
+              </span>
             </div>
             <Button variant="outline">
               <Icon name="User" size={18} />
@@ -582,6 +606,197 @@ const Index = () => {
                 </Card>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {activeSection === 'deposit' && (
+        <div className="container mx-auto px-4 py-12">
+          <div className="max-w-4xl mx-auto animate-fade-in">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-bold mb-2">Пополнение баланса</h1>
+              <p className="text-muted-foreground">Выберите удобный способ для пополнения счёта</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <Card className={`p-4 cursor-pointer transition-all ${currency === 'USD' ? 'ring-2 ring-primary' : 'hover:bg-card/80'}`} onClick={() => setCurrency('USD')}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
+                      <span className="text-2xl">$</span>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">USD счёт</h3>
+                      <p className="text-sm text-muted-foreground">${balanceUSD.toFixed(2)}</p>
+                    </div>
+                  </div>
+                  {currency === 'USD' && <Icon name="CheckCircle2" className="text-primary" size={24} />}
+                </div>
+              </Card>
+
+              <Card className={`p-4 cursor-pointer transition-all ${currency === 'RUB' ? 'ring-2 ring-secondary' : 'hover:bg-card/80'}`} onClick={() => setCurrency('RUB')}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center">
+                      <span className="text-2xl">₽</span>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">RUB счёт</h3>
+                      <p className="text-sm text-muted-foreground">₽{balanceRUB.toFixed(2)}</p>
+                    </div>
+                  </div>
+                  {currency === 'RUB' && <Icon name="CheckCircle2" className="text-secondary" size={24} />}
+                </div>
+              </Card>
+            </div>
+
+            <Tabs defaultValue="cards" className="w-full">
+              <TabsList className="grid w-full grid-cols-3 mb-6">
+                <TabsTrigger value="cards">Карты</TabsTrigger>
+                <TabsTrigger value="crypto">Криптовалюта</TabsTrigger>
+                <TabsTrigger value="wallet">Электронные кошельки</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="cards" className="space-y-4">
+                <Card className="p-6">
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Icon name="CreditCard" size={24} className="text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg mb-2">ЮMoney (Карта)</h3>
+                      <p className="text-sm text-muted-foreground mb-4">Переведите на карту и баланс обновится автоматически</p>
+                      
+                      <div className="bg-muted rounded-lg p-4 mb-3">
+                        <div className="flex items-center justify-between">
+                          <code className="text-lg font-mono">4100 1193 9909 4056</code>
+                          <Button size="sm" variant="ghost" onClick={() => navigator.clipboard.writeText('4100119399094056')}>
+                            <Icon name="Copy" size={16} />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <Badge variant="outline">RUB</Badge>
+                    </div>
+                  </div>
+                </Card>
+
+                <Card className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Icon name="CreditCard" size={24} className="text-secondary" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg mb-2">МТС Деньги</h3>
+                      <p className="text-sm text-muted-foreground mb-4">Пополнение через систему МТС Деньги</p>
+                      
+                      <div className="bg-muted rounded-lg p-4 mb-3">
+                        <div className="flex items-center justify-between">
+                          <code className="text-lg font-mono">2203 8302 3087 9075</code>
+                          <Button size="sm" variant="ghost" onClick={() => navigator.clipboard.writeText('2203830230879075')}>
+                            <Icon name="Copy" size={16} />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <Badge variant="outline">RUB</Badge>
+                    </div>
+                  </div>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="crypto" className="space-y-4">
+                <Card className="p-6">
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Icon name="Bitcoin" size={24} className="text-orange-500" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg mb-2">Bitcoin (BTC)</h3>
+                      <p className="text-sm text-muted-foreground mb-2">Сеть: TRC20</p>
+                      
+                      <div className="bg-muted rounded-lg p-4 mb-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <code className="text-sm font-mono break-all">THkAMDJ3pcfRjxi4rr2yPxELz6ySRzhm1d</code>
+                          <Button size="sm" variant="ghost" onClick={() => navigator.clipboard.writeText('THkAMDJ3pcfRjxi4rr2yPxELz6ySRzhm1d')}>
+                            <Icon name="Copy" size={16} />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <Badge variant="outline">TRC20</Badge>
+                        <Badge variant="outline">USD</Badge>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+
+                <Card className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Icon name="Coins" size={24} className="text-blue-500" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg mb-2">TON</h3>
+                      <p className="text-sm text-muted-foreground mb-2">TON Keeper кошелёк</p>
+                      
+                      <div className="bg-muted rounded-lg p-4 mb-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <code className="text-sm font-mono break-all">UQBRMNgegV2BmHsygDsYfC2O_VpI3Bp88comb3-cSSEVDf_u</code>
+                          <Button size="sm" variant="ghost" onClick={() => navigator.clipboard.writeText('UQBRMNgegV2BmHsygDsYfC2O_VpI3Bp88comb3-cSSEVDf_u')}>
+                            <Icon name="Copy" size={16} />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <Badge variant="outline">TON Network</Badge>
+                        <Badge variant="outline">USD</Badge>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="wallet" className="space-y-4">
+                <Card className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Icon name="Wallet" size={24} className="text-purple-500" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg mb-2">ЮMoney</h3>
+                      <p className="text-sm text-muted-foreground mb-4">Быстрое пополнение через ЮMoney кошелёк</p>
+                      
+                      <div className="bg-muted rounded-lg p-4 mb-3">
+                        <div className="flex items-center justify-between">
+                          <code className="text-lg font-mono">4100 1193 9909 4056</code>
+                          <Button size="sm" variant="ghost" onClick={() => navigator.clipboard.writeText('4100119399094056')}>
+                            <Icon name="Copy" size={16} />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <Badge variant="outline">RUB</Badge>
+                    </div>
+                  </div>
+                </Card>
+
+                <Card className="p-6 border-primary/50">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Icon name="Info" size={20} className="text-primary" />
+                    <h3 className="font-semibold">Как пополнить баланс?</h3>
+                  </div>
+                  <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+                    <li>Выберите удобный способ оплаты</li>
+                    <li>Скопируйте реквизиты кнопкой "Копировать"</li>
+                    <li>Переведите нужную сумму на указанные реквизиты</li>
+                    <li>Баланс обновится автоматически в течение 5-15 минут</li>
+                  </ol>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       )}
